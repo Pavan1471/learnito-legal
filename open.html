@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Open in Learnito</title>
+<style>
+  :root { --bg:#f6f5f1; --card:#fff; --ink:#15151a; --dim:#6b6b73; --btn:#15151a; --on:#fff; --line:#e4e2da; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0e0e12; --card:#17171d; --ink:#f3f3f6; --dim:#9a9aa5; --btn:#f3f3f6; --on:#0e0e12; --line:#2a2a33; } }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:var(--bg); color:var(--ink); font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif; }
+  .card { width:100%; max-width:380px; background:var(--card); border:1px solid var(--line); border-radius:28px; padding:32px 26px; text-align:center; }
+  h1 { font-size:22px; margin:0 0 8px; letter-spacing:-.3px; }
+  p { margin:0 0 22px; color:var(--dim); line-height:1.5; font-size:15px; }
+  a.btn { display:block; padding:16px; border-radius:18px; background:var(--btn); color:var(--on); font-weight:700; text-decoration:none; font-size:16px; }
+  a.link { display:inline-block; margin-top:18px; color:var(--dim); font-size:14px; }
+  .err { display:none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div id="ok">
+    <h1>Open this note in Learnito</h1>
+    <p>This file is shared inside the Learnito app. Tap the button to read it there.</p>
+    <a id="open" class="btn" href="#">Open in Learnito</a>
+    <a class="link" href="https://play.google.com/store/apps/details?id=com.learnito.app">Don't have the app? Get it on Google Play</a>
+  </div>
+  <div id="bad" class="err">
+    <h1>This link isn't valid</h1>
+    <p>Ask your friend to share the note again from the Learnito app.</p>
+  </div>
+</div>
+<script>
+(function () {
+  var id = new URLSearchParams(location.search).get('n') || '';
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    document.getElementById('ok').style.display = 'none';
+    document.getElementById('bad').style.display = 'block';
+    return;
+  }
+  var store = 'https://play.google.com/store/apps/details?id=com.learnito.app';
+  var android = /android/i.test(navigator.userAgent);
+  // On Android the intent link opens the app, or falls back to the Play Store page when it isn't installed.
+  var target = android
+    ? 'intent://note/' + id + '#Intent;scheme=learnito;package=com.learnito.app;S.browser_fallback_url=' + encodeURIComponent(store) + ';end'
+    : 'learnito://note/' + id;
+  document.getElementById('open').href = target;
+  setTimeout(function () { window.location.href = target; }, 300);
+})();
+</script>
+</body>
+</html>
